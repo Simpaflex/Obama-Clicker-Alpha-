@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Clicker Game</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    text-align:center;
+    background:linear-gradient(135deg,#4facfe,#00f2fe);
+    color:white;
+}
+
+h1{
+    font-size:60px;
+    margin-top:20px;
+}
+
+.stats{
+    font-size:30px;
+    margin:10px;
+}
+
+#clickImage{
+    width:300px;
+    cursor:pointer;
+    transition:0.1s;
+    user-select:none;
+}
+
+.shop{
+
+    width:550px;
+    margin:auto;
+    margin-top:30px;
+    background:rgba(255,255,255,0.15);
+    border-radius:20px;
+    padding:20px;
+
+}
+
+button{
+
+    font-size:22px;
+    padding:12px 25px;
+    margin:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:gold;
+
+}
+
+button:hover{
+
+    transform:scale(1.05);
+
+}
+
+.float{
+
+    position:absolute;
+    color:yellow;
+    font-size:35px;
+    font-weight:bold;
+    pointer-events:none;
+    animation:floatUp 1s linear forwards;
+
+}
+
+@keyframes floatUp{
+
+0%{
+opacity:1;
+transform:translateY(0px);
+}
+
+100%{
+opacity:0;
+transform:translateY(-100px);
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Clicker Game</h1>
+
+<div class="stats">
+Clicks:
+<span id="clicks">0</span>
+</div>
+
+<div class="stats">
+Multiplier:
+<span id="multiplier">1</span>x
+</div>
+
+<div class="stats">
+Auto Clicker:
+<span id="cps">1</span> CPS
+</div>
+
+<div class="stats">
+Rebirth Bonus:
+<span id="rebirthBonus">1</span>x
+</div>
+
+<div class="stats">
+Rebirth Cost:
+<span id="rebirthCost">1000000</span>
+</div>
+
+<br>
+
+<img
+src="clicker.png"
+id="clickImage"
+onclick="clickGame()"
+>
+
+<div class="shop">
+
+<h2>🛒 Shop</h2>
+
+<button onclick="buyMultiplier()">
+Click Multiplier<br>
+Cost:
+<span id="multiplierCost">10</span>
+</button>
+
+<br>
+
+<button onclick="buyAuto()">
+Auto Clicker<br>
+Cost:
+<span id="autoCost">25</span>
+</button>
+
+<br>
+
+<button onclick="rebirth()">
+🔄 Rebirth
+</button>
+
+</div>
+
+<h2 id="message"></h2>
+
+<script>
+
+let clicks=0;
+
+let multiplier=1;
+let multiplierCost=10;
+
+let cps=1;
+let autoCost=25;
+
+let rebirthBonus=1;
+let rebirthCost=1000000;
+
+function update(){
+
+document.getElementById("clicks").innerHTML=
+Math.floor(clicks);
+
+document.getElementById("multiplier").innerHTML=
+multiplier;
+
+document.getElementById("multiplierCost").innerHTML=
+multiplierCost;
+
+document.getElementById("cps").innerHTML=
+cps;
+
+document.getElementById("autoCost").innerHTML=
+autoCost;
+
+document.getElementById("rebirthBonus").innerHTML=
+rebirthBonus;
+
+document.getElementById("rebirthCost").innerHTML=
+rebirthCost;
+
+}
+
+function clickGame(){
+
+clicks += multiplier * rebirthBonus;
+
+let img=document.getElementById("clickImage");
+
+img.style.transform="scale(1.12)";
+
+setTimeout(function(){
+
+img.style.transform="scale(1)";
+
+},100);
+
+floatingText();
+
+update();
+
+}
+
+function floatingText(){
+
+let div=document.createElement("div");
+
+div.className="float";
+
+div.innerHTML="+"+(multiplier*rebirthBonus);
+
+div.style.left=
+(window.innerWidth/2-20+(Math.random()*120-60))+"px";
+
+div.style.top="250px";
+
+document.body.appendChild(div);
+
+setTimeout(function(){
+
+div.remove();
+
+},1000);
+
+}
+
+function buyMultiplier(){
+
+if(clicks>=multiplierCost){
+
+clicks-=multiplierCost;
+
+multiplier*=2;
+
+multiplierCost*=2;
+
+document.getElementById("message").innerHTML=
+"✅ Multiplier Upgraded!";
+
+}else{
+
+document.getElementById("message").innerHTML=
+"❌ Not enough clicks!";
+
+}
+
+update();
+
+}
+
+function buyAuto(){
+
+if(clicks>=autoCost){
+
+clicks-=autoCost;
+
+cps*=2;
+
+autoCost*=2;
+
+document.getElementById("message").innerHTML=
+"🤖 Auto Clicker Upgraded!";
+
+}else{
+
+document.getElementById("message").innerHTML=
+"❌ Not enough clicks!";
+
+}
+
+update();
+
+}
+
+function rebirth(){
+
+if(clicks>=rebirthCost){
+
+clicks=0;
+
+multiplier=1;
+multiplierCost=10;
+
+cps=1;
+autoCost=25;
+
+rebirthBonus*=5;
+
+rebirthCost*=10;
+
+document.getElementById("message").innerHTML=
+"🌟 Rebirth Successful!";
+
+}else{
+
+document.getElementById("message").innerHTML=
+"❌ You need "+rebirthCost+" clicks to rebirth!";
+
+}
+
+update();
+
+}
+
+setInterval(function(){
+
+clicks += cps * rebirthBonus;
+
+update();
+
+},1000);
+
+update();
+
+</script>
+
+</body>
+</html>
